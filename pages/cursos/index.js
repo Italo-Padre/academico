@@ -2,14 +2,27 @@ import Pagina from '@/componentes/Pagina'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { Table } from 'react-bootstrap'
-import {AiOutlineDelete} from 'react-icons/ai'
+import {AiFillEdit, AiOutlineDelete} from 'react-icons/ai'
 
 const index = () => {
   const [cursos, setCursos] = useState([])
 
   useEffect(() => {
-    setCursos(JSON.parse(window.localStorage.getItem('cursos')) || [])
+    setCursos(getAll)
   })
+
+  function getAll(){
+    return JSON.parse(window.localStorage.getItem('cursos')) || []
+  }
+
+  function excluir(id){
+    if(confirm('Deseja realmente excluir ?')){
+      const cursos = getAll()
+      cursos.splice(id,1)
+      window.localStorage.setItem('cursos', JSON.stringify(cursos))
+      setCursos(cursos)
+    }
+  }
   return (
     <>
         <Pagina titulo='Cursos'>
@@ -25,8 +38,12 @@ const index = () => {
       </thead>
       <tbody> 
         {cursos.map((item, i) =>(
-          <tr>
-          <td><AiOutlineDelete/></td>
+          <tr key={i}>
+          <td >
+            <Link href={'/cursos/'+i}><AiFillEdit className='me-2' /></Link>
+            
+            <AiOutlineDelete onClick={()=>excluir(i)}/>
+            </td>
           <td>{item.nome}</td>
           <td>{item.duracao}</td>
           <td>{item.modalidade}</td>
