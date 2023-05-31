@@ -20,4 +20,4 @@ const firebaseConfig = {
 
 const db = getDatabase(app)
 
-export{db,set,ref}
+export{db}
