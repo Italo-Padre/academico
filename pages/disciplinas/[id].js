@@ -1,4 +1,5 @@
 import Pagina from '@/componentes/Pagina'
+import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
@@ -12,42 +13,40 @@ const form = () => {
 
   useEffect(()=> {
     if(query.id){
-      const cursos = JSON.parse(window.localStorage.getItem('cursos'))
-      const curso = cursos[query.id]
-      for(let atributo in curso){
-        setValue(atributo,curso[atributo])
-      }
+      axios.get('/api/disciplinas/' + query.id).then(resultado=>{
+        const disciplina = resultado.data
+
+        for(let atributo in disciplina){
+          setValue(atributo,disciplina[atributo])
+        }
+       })
+
     }
   }, [query.id])
 
   function salvar(dados){
-    const cursos = JSON.parse(window.localStorage.getItem('cursos')) || []
-    cursos.splice(query.id, 1, dados)
-    window.localStorage.setItem('cursos', JSON.stringify(cursos))
-    push('/cursos')
+    axios.put('/api/disciplinas/' + dados.id, dados)
+    push('/disciplinas')
   }
   return (
     <>
-      <Pagina titulo='Curso'>
+      <Pagina titulo='Disciplinas'>
         <Form>
           <Form.Group className="mb-3" controlId="nome">
             <Form.Label>Nome:</Form.Label>
             <Form.Control {...register('nome')} type="text" />
           </Form.Group>
           <Form.Group className="mb-3" controlId="duracao">
-            <Form.Label>Duração:</Form.Label>
-            <Form.Control {...register('duracao')}  type="text" />
-            <Form.Group className="mb-3" controlId="modalidade">
-              <Form.Label>Modalidade:</Form.Label>
-              <Form.Control {...register('modalidade')}  type="text" />
-            </Form.Group>
+            <Form.Label>Curso:</Form.Label>
+            <Form.Control {...register('curso')}  type="text" />
+           
           </Form.Group>
           <div className='text-center'>
 
           <Button variant="success" onClick={handleSubmit(salvar)}>
          < AiOutlineCheck className='me-1'/> Salvar
           </Button>
-          <Link href={'/cursos'} className='ms-2 btn btn-danger' ><AiOutlineArrowLeft className='me-1'/>Voltar</Link>
+          <Link href={'/disciplinas'} className='ms-2 btn btn-danger' ><AiOutlineArrowLeft className='me-1'/>Voltar</Link>
           </div>
 
         </Form>
